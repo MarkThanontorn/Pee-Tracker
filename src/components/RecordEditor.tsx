@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { db } from '../db';
 import { atOnDay, DRINK_LABEL, DRINK_TYPES, hhmm, type Drink, type DrinkType, type Void } from '../time';
+import { DRINK_ICON, DropIcon } from './Icons';
 import Sheet from './Sheet';
 
 export type EditTarget =
@@ -41,35 +42,50 @@ export default function RecordEditor({ target, day, onClose }: { target: EditTar
     onClose();
   }
 
-  const title = `${isNew ? 'เพิ่ม' : 'แก้ไข'}${target.kind === 'drink' ? 'เครื่องดื่ม' : 'การฉี่'}`;
+  const isDrink = target.kind === 'drink';
+  const Icon = isDrink ? DRINK_ICON[type] : DropIcon;
+  const title = `${isNew ? 'เพิ่ม' : 'แก้ไข'}${isDrink ? 'เครื่องดื่ม' : 'การฉี่'}`;
   return (
-    <Sheet title={title} onClose={onClose}>
-      <label className="field">
-        เวลา
-        <input type="time" value={time} onChange={(e) => setTime(e.target.value)} />
-      </label>
-      {target.kind === 'drink' ? (
+    <Sheet title={title} icon={<Icon />} tone={isDrink ? `t-${type}` : 't-pee'} onClose={onClose}>
+      {isDrink ? (
         <>
           <div className="chips">
-            {DRINK_TYPES.map((t) => (
-              <button key={t} className={`chip${type === t ? ' on' : ''}`} onClick={() => setType(t)}>
-                {DRINK_LABEL[t]}
-              </button>
-            ))}
+            {DRINK_TYPES.map((t) => {
+              const TIcon = DRINK_ICON[t];
+              return (
+                <button key={t} className={`chip t-${t}${type === t ? ' on' : ''}`} onClick={() => setType(t)}>
+                  <TIcon size={16} />
+                  {DRINK_LABEL[t]}
+                </button>
+              );
+            })}
           </div>
-          <label className="field">
-            ปริมาณ (ml)
-            <input type="number" inputMode="numeric" min={1} max={5000} value={ml} onChange={(e) => setMl(e.target.value)} />
-          </label>
+          <div style={{ marginTop: 8 }}>
+            <label className="field">
+              ปริมาณ (ml)
+              <input type="number" inputMode="numeric" min={1} max={5000} value={ml} onChange={(e) => setMl(e.target.value)} />
+            </label>
+            <label className="field">
+              เวลา
+              <input type="time" value={time} onChange={(e) => setTime(e.target.value)} />
+            </label>
+          </div>
         </>
       ) : (
         <>
-          <label className="check">
-            <input type="checkbox" checked={urgent} onChange={(e) => setUrgent(e.target.checked)} /> ปวดเร่งด่วน (กลั้นยาก)
+          <label className="field">
+            เวลา
+            <input type="time" value={time} onChange={(e) => setTime(e.target.value)} />
           </label>
-          <label className="check">
-            <input type="checkbox" checked={pain} onChange={(e) => setPain(e.target.checked)} /> ปวดแสบขณะฉี่
-          </label>
+          <div className="muted" style={{ marginTop: 6 }}>อาการ (ถ้ามี)</div>
+          <div className="toggle-row">
+            <button className={`toggle${urgent ? ' on' : ''}`} onClick={() => setUrgent(!urgent)}>
+              ปวดเร่งด่วน
+            </button>
+            <button className={`toggle${pain ? ' on' : ''}`} onClick={() => setPain(!pain)}>
+              ปวดแสบ
+            </button>
+          </div>
         </>
       )}
       <div className="btn-row">
@@ -81,7 +97,7 @@ export default function RecordEditor({ target, day, onClose }: { target: EditTar
         <button className="btn" onClick={onClose}>
           ยกเลิก
         </button>
-        <button className="btn primary" disabled={!valid} onClick={save}>
+        <button className="btn accent" disabled={!valid} onClick={save}>
           บันทึก
         </button>
       </div>

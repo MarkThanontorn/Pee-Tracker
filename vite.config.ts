@@ -11,14 +11,15 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
+      workbox: { globPatterns: ['**/*.{js,css,html,woff2,png,svg}'] },
       includeAssets: ['icons/apple-touch-icon.png', 'icons/favicon.svg'],
       manifest: {
         name: 'Pee Tracker — บันทึกดื่ม/ฉี่',
         short_name: 'Pee Tracker',
         description: 'บันทึกการดื่มกาแฟ/แอลกอฮอล์/น้ำ เทียบกับการปัสสาวะ',
         lang: 'th',
-        theme_color: '#1a5f80',
-        background_color: '#9fb0c0',
+        theme_color: '#5b54e8',
+        background_color: '#f3f4f8',
         display: 'standalone',
         orientation: 'portrait',
         start_url: base,

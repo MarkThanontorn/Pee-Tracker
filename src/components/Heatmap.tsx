@@ -5,10 +5,9 @@ const short = (key: string) => {
   return `${d}/${m}`;
 };
 
-/** Pee count per slot (rows) × day (columns). */
-export default function Heatmap({ days, dark }: { days: DaySummary[]; dark: boolean }) {
+/** Pee count per slot (rows) × day (columns), shaded with the --pee accent. */
+export default function Heatmap({ days }: { days: DaySummary[] }) {
   const max = Math.max(1, ...days.flatMap((d) => d.slots.map((s) => s.voids)));
-  const rgb = dark ? '95,181,234' : '26,95,128';
   return (
     <div className="heatmap">
       {SLOTS.map((slot, i) => (
@@ -22,7 +21,7 @@ export default function Heatmap({ days, dark }: { days: DaySummary[]; dark: bool
                   key={d.key}
                   className="cell"
                   title={`${short(d.key)} ${slot.label}: ${n} ครั้ง`}
-                  style={n ? { background: `rgba(${rgb},${0.25 + 0.75 * (n / max)})` } : undefined}
+                  style={n ? { background: `color-mix(in srgb, var(--pee) ${30 + 70 * (n / max)}%, transparent)` } : undefined}
                 />
               );
             })}

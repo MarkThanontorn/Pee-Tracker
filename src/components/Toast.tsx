@@ -1,14 +1,15 @@
-import { useEffect } from 'react';
+import { useEffect, type ReactNode } from 'react';
 
 export interface ToastAction {
   label: string;
   on?: boolean;
-  warn?: boolean;
+  undo?: boolean;
   onClick: () => void;
 }
 
 export interface ToastData {
   id: number;
+  icon?: ReactNode;
   message: string;
   actions: ToastAction[];
 }
@@ -22,10 +23,13 @@ export default function Toast({ toast, onDone }: { toast: ToastData; onDone: () 
 
   return (
     <div className="toast" role="status">
-      <div className="msg">{toast.message}</div>
+      <div className="msg">
+        {toast.icon}
+        {toast.message}
+      </div>
       <div className="chips">
         {toast.actions.map((a) => (
-          <button key={a.label} className={`chip${a.on ? ' on' : ''}${a.warn ? ' warn' : ''}`} onClick={a.onClick}>
+          <button key={a.label} className={`chip${a.on ? ' on' : ''}${a.undo ? ' undo' : ''}`} onClick={a.onClick}>
             {a.label}
           </button>
         ))}

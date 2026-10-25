@@ -1,8 +1,19 @@
-import { BarElement, CategoryScale, Chart, Legend, LinearScale, Tooltip } from 'chart.js';
+import {
+  BarController,
+  BarElement,
+  CategoryScale,
+  Chart,
+  Legend,
+  LinearScale,
+  LineController,
+  LineElement,
+  PointElement,
+  Tooltip,
+} from 'chart.js';
 import { useEffect, useState } from 'react';
 
-Chart.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
-Chart.defaults.font.family = "system-ui, -apple-system, 'Segoe UI', 'Noto Sans Thai', 'Leelawadee UI', sans-serif";
+Chart.register(BarController, LineController, BarElement, LineElement, PointElement, CategoryScale, LinearScale, Tooltip, Legend);
+Chart.defaults.font.family = "'IBM Plex Sans Thai', system-ui, -apple-system, 'Segoe UI', sans-serif";
 
 export function useDark() {
   const mq = window.matchMedia('(prefers-color-scheme: dark)');
@@ -15,11 +26,27 @@ export function useDark() {
   return dark;
 }
 
-/** Drink colours on the green panel (Today) and on neutral surfaces (Trends). */
-export const DRINK_ON_GREEN = { coffee: '#f0d3a8', alcohol: '#f6a5b8', water: '#a9dcff' };
-export const drinkColors = (dark: boolean) =>
-  dark
-    ? { coffee: '#c99a6b', alcohol: '#e57f97', water: '#5fb5ea' }
-    : { coffee: '#8b5a2b', alcohol: '#b8475e', water: '#2f8fd0' };
-export const peeColors = (dark: boolean) =>
-  dark ? { day: '#5fb5ea', night: '#a58cf0' } : { day: '#2477a0', night: '#4b3a9c' };
+/** Keep in sync with the --coffee / --alcohol / --water / --pee tokens in styles.css. */
+export function palette(dark: boolean) {
+  return dark
+    ? {
+        coffee: '#d9a46c',
+        alcohol: '#f07a9b',
+        water: '#46b8f0',
+        pee: '#9d98ff',
+        peeNight: '#5b55c9',
+        text: '#9aa1ad',
+        grid: '#262b35',
+        surface: '#171a21',
+      }
+    : {
+        coffee: '#b5773b',
+        alcohol: '#d6456d',
+        water: '#0f9fe0',
+        pee: '#5b54e8',
+        peeNight: '#2f2a8c',
+        text: '#6b7280',
+        grid: '#eef0f4',
+        surface: '#ffffff',
+      };
+}

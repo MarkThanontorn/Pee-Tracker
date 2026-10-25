@@ -5,13 +5,14 @@ import Today from './screens/Today';
 import Trends from './screens/Trends';
 import Logs from './screens/Logs';
 import Settings from './screens/Settings';
+import { ChartIcon, DropIcon, ListIcon, SlidersIcon } from './components/Icons';
 
 type Tab = 'today' | 'trends' | 'logs' | 'settings';
-const TABS: { id: Tab; icon: string; label: string }[] = [
-  { id: 'today', icon: '💧', label: 'วันนี้' },
-  { id: 'trends', icon: '📈', label: 'แนวโน้ม' },
-  { id: 'logs', icon: '📝', label: 'บันทึก' },
-  { id: 'settings', icon: '⚙️', label: 'ตั้งค่า' },
+const TABS: { id: Tab; Icon: typeof DropIcon; label: string }[] = [
+  { id: 'today', Icon: DropIcon, label: 'วันนี้' },
+  { id: 'trends', Icon: ChartIcon, label: 'แนวโน้ม' },
+  { id: 'logs', Icon: ListIcon, label: 'บันทึก' },
+  { id: 'settings', Icon: SlidersIcon, label: 'ตั้งค่า' },
 ];
 
 /** Re-evaluates the logical "today" every minute so the app rolls over at 06:00. */
@@ -53,7 +54,9 @@ export default function App() {
         <nav>
           {TABS.map((t) => (
             <button key={t.id} className={tab === t.id ? 'on' : ''} onClick={() => setTab(t.id)}>
-              <span className="ic">{t.icon}</span>
+              <span className="pill">
+                <t.Icon size={22} />
+              </span>
               {t.label}
             </button>
           ))}

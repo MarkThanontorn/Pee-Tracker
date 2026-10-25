@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { clearAll, exportBackup, exportCsv, importBackup, savePresets, seedDemo, usePresets, type Presets } from '../db';
 import { DRINK_LABEL, DRINK_TYPES } from '../time';
+import { ChevronRight, DRINK_ICON } from '../components/Icons';
 
 /** Share sheet on mobile when available (easy to send to Files/LINE/email), download otherwise. */
 async function saveFile(name: string, text: string, mime: string) {
@@ -65,70 +66,73 @@ export default function Settings() {
 
   return (
     <>
-      <h1 style={{ color: '#fff', fontSize: 22, margin: '8px 0 0', textShadow: '0 1px 2px #0004' }}>ตั้งค่า</h1>
-      {msg && <div className="insight info">{msg}</div>}
+      <header className="top">
+        <div>
+          <div className="eyebrow">Pee Tracker</div>
+          <h1>ตั้งค่า</h1>
+        </div>
+      </header>
+      {msg && <div className="banner">{msg}</div>}
 
-      <div className="box">
-        <h2>ขนาดแก้วที่ใช้บ่อย (ml)</h2>
-        <p className="muted">คั่นด้วยจุลภาค สูงสุด 6 ค่า — แสดงเป็นปุ่มเมื่อแตะการ์ด</p>
-        {DRINK_TYPES.map((t) => (
-          <label key={t} className="field">
-            <span style={{ width: 90, flex: 'none' }}>{DRINK_LABEL[t]}</span>
-            <input type="text" inputMode="numeric" value={draft[t] ?? ''} onChange={(e) => setDraft({ ...draft, [t]: e.target.value })} />
-          </label>
-        ))}
-        <button className="btn primary" style={{ width: '100%' }} onClick={savePresetDraft}>
+      <div className="group-title">ขนาดแก้วที่ใช้บ่อย (ml)</div>
+      <section className="card">
+        {DRINK_TYPES.map((t) => {
+          const Icon = DRINK_ICON[t];
+          return (
+            <label key={t} className={`field t-${t}`}>
+              <span style={{ display: 'flex', alignItems: 'center', gap: 8, width: 110, flex: 'none', color: 'var(--c)' }}>
+                <Icon size={20} />
+                <span style={{ color: 'var(--text)' }}>{DRINK_LABEL[t]}</span>
+              </span>
+              <input type="text" inputMode="numeric" value={draft[t] ?? ''} onChange={(e) => setDraft({ ...draft, [t]: e.target.value })} />
+            </label>
+          );
+        })}
+        <p className="note" style={{ marginTop: 4 }}>คั่นด้วยจุลภาค สูงสุด 6 ค่า — แสดงเป็นปุ่มเมื่อแตะการ์ดเครื่องดื่ม</p>
+        <button className="btn primary block" style={{ marginTop: 10 }} onClick={savePresetDraft}>
           บันทึกขนาดแก้ว
         </button>
-      </div>
+      </section>
 
-      <div className="box">
-        <h2>สำรอง / ส่งออกข้อมูล</h2>
-        <p className="muted">ข้อมูลเก็บอยู่ในเครื่องนี้เท่านั้น แนะนำให้ส่งออกเก็บไว้เป็นระยะ</p>
-        <div className="btn-row">
-          <button className="btn" onClick={async () => saveFile(`pee-tracker-${stamp()}.json`, JSON.stringify(await exportBackup()), 'application/json')}>
-            สำรอง (JSON)
-          </button>
-          <button className="btn" onClick={() => fileRef.current?.click()}>
-            นำเข้า
-          </button>
-        </div>
-        <div className="btn-row">
-          <button className="btn" onClick={async () => saveFile(`pee-tracker-${stamp()}.csv`, await exportCsv(), 'text/csv')}>
-            ส่งออก CSV (ให้แพทย์ดู)
-          </button>
-        </div>
+      <div className="group-title">สำรอง / ส่งออก</div>
+      <section className="card" style={{ paddingTop: 4, paddingBottom: 4 }}>
+        <button className="list-btn" onClick={async () => saveFile(`pee-tracker-${stamp()}.json`, JSON.stringify(await exportBackup()), 'application/json')}>
+          สำรองข้อมูล (JSON) <ChevronRight size={18} className="chev" />
+        </button>
+        <button className="list-btn" onClick={() => fileRef.current?.click()}>
+          นำเข้าจากไฟล์สำรอง <ChevronRight size={18} className="chev" />
+        </button>
+        <button className="list-btn" onClick={async () => saveFile(`pee-tracker-${stamp()}.csv`, await exportCsv(), 'text/csv')}>
+          ส่งออก CSV (ให้แพทย์ดู) <ChevronRight size={18} className="chev" />
+        </button>
         <input ref={fileRef} type="file" accept="application/json,.json" hidden onChange={(e) => onImport(e.target.files?.[0])} />
-        <p className="muted" style={{ marginTop: 12 }}>
-          สถานะพื้นที่เก็บ: {persisted === null ? '…' : persisted ? 'ถาวร ✓' : 'ชั่วคราว — ติดตั้งลงหน้าจอโฮมเพื่อลดโอกาสข้อมูลหาย'}
-        </p>
-      </div>
+      </section>
+      <p className="note" style={{ margin: '8px 4px 0' }}>
+        ข้อมูลเก็บในเครื่องนี้เท่านั้น · พื้นที่เก็บ:{' '}
+        {persisted === null ? '…' : persisted ? 'ถาวร ✓' : 'ชั่วคราว — ติดตั้งลงหน้าจอโฮมเพื่อลดโอกาสข้อมูลหาย'}
+      </p>
 
-      <div className="box">
-        <h2>ข้อมูล</h2>
+      <div className="group-title">ข้อมูล</div>
+      <section className="card" style={{ paddingTop: 4, paddingBottom: 4 }}>
         {import.meta.env.DEV && (
-          <div className="btn-row">
-            <button className="btn" onClick={async () => { await seedDemo(); setMsg('เพิ่มข้อมูลตัวอย่าง 90 วันแล้ว'); }}>
-              เพิ่มข้อมูลตัวอย่าง (dev)
-            </button>
-          </div>
-        )}
-        <div className="btn-row">
-          <button
-            className="btn danger"
-            onClick={async () => {
-              if (!confirm('ลบข้อมูลการดื่มและการฉี่ทั้งหมด? (กู้คืนไม่ได้ถ้าไม่ได้สำรองไว้)')) return;
-              await clearAll();
-              setMsg('ลบข้อมูลทั้งหมดแล้ว');
-            }}
-          >
-            ลบข้อมูลทั้งหมด
+          <button className="list-btn" onClick={async () => { await seedDemo(); setMsg('เพิ่มข้อมูลตัวอย่าง 90 วันแล้ว'); }}>
+            เพิ่มข้อมูลตัวอย่าง (dev) <ChevronRight size={18} className="chev" />
           </button>
-        </div>
-        <p className="muted">
-          แอพนี้ใช้เกณฑ์ทั่วไปเพื่อช่วยสังเกตพฤติกรรม ไม่ใช่เครื่องมือวินิจฉัยโรค หากมีอาการผิดปกติควรปรึกษาแพทย์
-        </p>
-      </div>
+        )}
+        <button
+          className="list-btn danger"
+          onClick={async () => {
+            if (!confirm('ลบข้อมูลการดื่มและการฉี่ทั้งหมด? (กู้คืนไม่ได้ถ้าไม่ได้สำรองไว้)')) return;
+            await clearAll();
+            setMsg('ลบข้อมูลทั้งหมดแล้ว');
+          }}
+        >
+          ลบข้อมูลทั้งหมด
+        </button>
+      </section>
+      <p className="note" style={{ margin: '12px 4px 0' }}>
+        แอพนี้ใช้เกณฑ์ทั่วไปเพื่อช่วยสังเกตพฤติกรรม ไม่ใช่เครื่องมือวินิจฉัยโรค หากมีอาการผิดปกติควรปรึกษาแพทย์
+      </p>
     </>
   );
 }
