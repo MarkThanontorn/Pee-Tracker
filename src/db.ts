@@ -6,7 +6,7 @@ export type Presets = Record<DrinkType, number[]>;
 export const DEFAULT_PRESETS: Presets = {
   coffee: [150, 250, 350],
   alcohol: [150, 330, 500],
-  water: [250, 500, 750],
+  water: [150, 250, 500],
 };
 
 class TrackerDB extends Dexie {
